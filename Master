@@ -1,0 +1,38 @@
+//RobotC
+
+task main()
+{
+  int BASEPOWER = 30;
+  void drawDiag(bool north, int angle, bool east, float dist)
+  {
+      int dirX, dirY;
+      float Xdist, Ydist, powerX, powerY;
+
+      if(north)
+          dirX = 1;
+      else
+          dirX = -1;
+      if(east)
+          dirY = 1;
+      else
+          dirY = -1;
+
+      Xdist = dirX * dist * cos(rad(angle));
+      Ydist = dirY * dist * sin(rag(angle));
+
+      powerX = BASEPOWER*sin(rad(angle));
+      powerY = BASEPOWER*cos(rad(angle));
+      motor[motorA] = powerX;
+      motor[motorB] = powerY;
+
+      while(nMotorEncoder[motorA]*nMotorEncoder[motorA] + nMotorEncoder[motorB]*nMotorEncoder[motorB] < dist*dist)
+      {}
+
+      motor[motorA] = motor[motorB] = 0;
+  }
+
+  float rad(float deg)
+  {
+      return deg*PI/180.0;
+  }
+}
