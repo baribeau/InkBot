@@ -26,7 +26,7 @@ task main()
       motor[motorB] = powerY;
 
       double aSquared = pow((degreesToMM(nMotorEncoder[motorA])),2);
-	    double bSquared = pow((degreesToMM(nMotorEncoder[motorB])),2);
+      double bSquared = pow((degreesToMM(nMotorEncoder[motorB])),2);
 
       while(aSquared + bSquared < dist*dist)
       {}
