@@ -28,9 +28,9 @@ void drawDiag(bool north, int angle, bool east, float dist)
     powerY = BASEPOWER*cos(rad(angle));
     motor[motorA] = powerX;
     motor[motorB] = powerY;
-
-	double aSquared = pow((degreesToMM(nMotorEncoder[motorA])),2);
-	double bSquared = pow((degreesToMM(nMotorEncoder[motorB])),2);
+    
+    double aSquared = pow((degreesToMM(nMotorEncoder[motorA])),2);
+    double bSquared = pow((degreesToMM(nMotorEncoder[motorB])),2);
 
     while(aSquared + bSquared < dist*dist)
     {}
@@ -87,7 +87,6 @@ void drawU()
 void spaceAfterU()		//Space between words is 1 cm
 {
 	go_straight(motorA,10);
-
 }
 
 void drawO()
@@ -100,7 +99,6 @@ void drawO()
 	inkOn(false);
 //Space between letters is 0.5cm however the O finishes at the bottom left corner and must travel 10 mm + 5mm
 	go_straight(motorA,15);
-
 }
 
 void drawF()
