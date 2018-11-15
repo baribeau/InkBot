@@ -6,7 +6,7 @@ motorC ink motor*/
 
 
 //CODE WRITTEN BY JULIA BARIBEAU
-int BASEPOWER = 30;
+const int BASEPOWER = 30;
 void drawDiag(bool north, int angle, bool east, float dist)
 {
     int dirX, dirY;
@@ -34,8 +34,8 @@ void drawDiag(bool north, int angle, bool east, float dist)
 
     while(aSquared + bSquared < dist*dist)
     {}
-
-	motor[motorA] = motor[motorB] = 0;
+    
+    motor[motorA] = motor[motorB] = 0;
 }
 
 float rad(float deg)
