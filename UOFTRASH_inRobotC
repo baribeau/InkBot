@@ -1,0 +1,190 @@
+/*NOTE TO READER OR PROGRAMMER
+
+motorA is the X direction (the longer rack)
+motorB is the Y direction (the shorter rack)
+motorC ink motor*/
+
+
+//CODE WRITTEN BY JULIA BARIBEAU
+int BASEPOWER = 30;
+void drawDiag(bool north, int angle, bool east, float dist)
+{
+    int dirX, dirY;
+    float Xdist, Ydist, powerX, powerY;
+
+    if(north)
+        dirX = 1;
+    else
+        dirX = -1;
+    if(east)
+        dirY = 1;
+    else
+        dirY = -1;
+
+    Xdist = dirX * dist * cos(rad(angle));
+    Ydist = dirY * dist * sin(rag(angle));
+
+    powerX = BASEPOWER*sin(rad(angle));
+    powerY = BASEPOWER*cos(rad(angle));
+    motor[motorA] = powerX;
+    motor[motorB] = powerY;
+
+	double aSquared = pow((degreesToMM(nMotorEncoder[motorA])),2);
+	double bSquared = pow((degreesToMM(nMotorEncoder[motorB])),2);
+
+    while(aSquared + bSquared < dist*dist)
+    {}
+
+	motor[motorA] = motor[motorB] = 0;
+}
+
+float rad(float deg)
+{
+    return deg*PI/180.0;
+}
+////////////////////////////////////////////////////////////////////////////////////////
+//CODE WRITTEN BY KATHRINE
+
+const int MOTORCON = 15;
+void inkOn (bool inkMotor)
+{
+	if (inkMotor == true)
+		motor[motorC]= MOTORCON;
+	else
+		motor[motorC]= 0;
+}
+
+double degreesToMM(int degrees)
+{
+	return ((double)degrees/15);
+}
+
+//This code writes U OF TRASH
+void uOfTrash()
+{
+	drawU();
+	spaceAfterU();
+	drawO();
+	drawF();
+	spaceAfterF();
+	drawT();
+	drawR();
+	drawA();
+	drawS();
+	drawH();
+}
+
+void drawU()
+{
+	motor[motorA]=motor[motorB]=motor[motorC]=0;
+	inkOn(true);
+	go_straight(motorB,-20);
+	go_straight(motorA,10);
+	go_straight(motorB,20);
+	inkOn(false);	
+}
+
+void spaceAfterU()		//Space between words is 1 cm
+{
+	go_straight(motorA,10);
+
+}
+
+void drawO()
+{
+	inkOn(true);
+	go_straight(motorA,10);
+	go_straight(motorB,-20);
+	go_straight(motorA,-10);
+	go_straight(motorB,20);
+	inkOn(false);
+//Space between letters is 0.5cm however the O finishes at the bottom left corner and must travel 10 mm + 5mm
+	go_straight(motorA,15);
+
+}
+
+void drawF()
+{
+	inkOn(true);
+	go_straight(motorB,-20);
+	inkOn(false);
+	go_straight(motorB,10);
+	inkOn(true);
+	go_straight(motorA,10);
+	inkOn(false);
+	go_straight(motorB,10);
+	inkOn(true);
+	go_straight(motorA,-10);
+	inkOn(false);
+}
+
+void spaceAfterF()
+{
+	go_straight(motorA,20);
+}
+
+void drawT()
+{
+	inkOn(true);
+	go_straight(motorA,10);
+	inkOn(false);
+	go_straight(motorA,-5);
+	inkOn(true);
+	go_straight(motorB,-20);
+	inkOn(false);
+	go_straight(motorA,10);
+}
+
+void drawR()
+{
+	inkOn(true);
+	go_straight(motorB,20);
+	go_straight(motorA,10);
+	go_straight(motorB,-10);
+	go_straight(motorA,-10);
+	drawDiag(false, 45, true, sqrt(2)*10);
+	inkOn(false);
+	go_straight(motorA,5);
+}
+
+void drawA()
+{
+	inkOn(true);
+	go_straight(motorB,20);
+	go_straight(motorA,10);
+	go_straight(motorB,-20);
+	inkOn(false);
+	go_straight(motorB,10);
+	inkOn(true);
+	go_straight(motorA,-10);
+	inkOn(false);
+	go_straight(motorA,15);
+	go_straight(motorB,-10);
+}
+
+void drawS()
+{
+	inkOn(true);
+	go_straight(motorA,10);
+	go_straight(motorB,10);
+	go_straight(motorA,-10);
+	go_straight(motorB,10);
+	go_straight(motorA,10);
+	inkOn(false);
+	go_straight(motorA,5);
+}
+
+void drawH ()
+{
+	inkOn(true);
+	go_straight(motorB,-20);
+	inkOn(false);
+	go_straight(motorA,10);
+	inkOn(true);
+	go_straight(motorB,20);
+	inkOn(false);
+	go_straight(motorB,-10);
+	inkOn(true);
+	go_straight(motorA,-10);
+	inkOn(false);
+}
