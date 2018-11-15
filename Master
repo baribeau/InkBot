@@ -2,7 +2,7 @@
 
 task main()
 {
-  int BASEPOWER = 30;
+  const int BASEPOWER = 30;
   void drawDiag(bool north, int angle, bool east, float dist)
   {
       int dirX, dirY;
