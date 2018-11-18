@@ -1,0 +1,23 @@
+void drawCube()
+{
+	inkOn (true);
+	
+	draw(false, 0 , true, 1);
+	draw(false, 90 , true , 1);
+	draw(true, 0 , false, 1);
+	draw(true, 90 , false, 1);
+	
+	draw(true, 45, true, 1);
+	draw(true, 90, true, 1);
+	draw(false, 45, false, 1);
+	
+	inkOn (false);
+	draw(true, 45, true, 1);
+	inkOn (true);
+	
+	draw(false, 0, false, 1); 
+	draw(false, 45, false, 1); 
+	
+	motor[motorA] = motor[motorB] = motor[motorC] = 0;
+	
+}
