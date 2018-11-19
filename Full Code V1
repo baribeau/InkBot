@@ -1,3 +1,4 @@
+
 /*NOTE TO READER OR PROGRAMMER
 motorA is the Y direction (the longer rack)
 motorB is the X direction (the shorter rack)
@@ -145,24 +146,48 @@ void shutdownProcedure()
 	wait1Msec(5000); 
 }
 
+void drawSquare()
+{
+	inkOn (true);
+	drawDiag(false, 90, true, 30);
+	drawDiag(false, 0, true, 30);
+	drawDiag(true, 90, false, 30);
+	drawDiag(true, 0, false, 30);
+	inkOn (false);
+}
+
 //Use Left button for UW and use right button for Cube 
 task main ()
 {
 	configureSensors();
 	zeroBot();
-	
-	while (!getButtonPress(buttonUp))
+				
+while (getButtonPress(ButtonNone));
+
+if (getButtonPress(ButtonLeft))
+{
+	while (getButtonPress(ButtonLeft));
 	{
-		if(getButtonPress(buttonRight))
-		{
-			drawCube();
-		}
-		else
-		{
-			drawU();
-			drawW();	
-		}
+		drawCube();
 	}
 	
+}
+else if (getButtonPress(ButtonRight))
+{
+	while (getButtonPress(ButtonRight));
+	{
+		drawU();
+		drawW();	
+	}
+	
+}
+
+/*
+else if (getButtonPress(ButtonDown))
+{
+	while (getButtonPress(ButtonDown));
+	//insert code for third pattern
+}		
+*/	
 	shutdownProcedure()
 }
