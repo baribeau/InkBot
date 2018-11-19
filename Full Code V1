@@ -1,0 +1,168 @@
+/*NOTE TO READER OR PROGRAMMER
+motorA is the Y direction (the longer rack)
+motorB is the X direction (the shorter rack)
+motorC ink motor*/
+
+const int INKPOWER = 5;
+const int BASEPOWER = 10;
+
+float degreesToMM(int degrees)
+{
+	return ((float)degrees/15);
+}
+
+float rad(float deg)
+{
+    return deg*PI/180.0;
+}
+
+void draw(bool north, int angle, bool east, float dist)
+{
+		nMotorEncoder[motorA]=0;
+		nMotorEncoder[motorB]=0;
+		nMotorEncoder[motorC]=0;
+    int dirX, dirY;
+    float Xdist, Ydist, powerX, powerY;
+
+    if(north)
+        dirX = 1;
+    else
+        dirX = -1;
+    if(east)
+        dirY = -1;
+    else
+        dirY = 1;
+
+    Xdist = dirX * dist * cos(rad(angle));
+    Ydist = dirY * dist * sin(rad(angle));
+
+    powerX = dirX * BASEPOWER*cos(rad(angle));
+    powerY = dirY * BASEPOWER*sin(rad(angle));
+
+    motor[motorA] = powerX;
+    motor[motorB] = powerY;
+
+    while((pow((degreesToMM(nMotorEncoder[motorA])),2) + pow((degreesToMM(nMotorEncoder[motorB])),2)) < dist*dist)
+    {}
+
+	motor[motorA] = motor[motorB] = 0;
+}
+
+void inkOn (bool inkMotor)
+{
+	if (inkMotor == true)
+		motor[motorC]= INKPOWER;
+	else
+		motor[motorC]= 0;
+	wait1Msec(50);
+}
+
+//This code writes UW
+
+void drawU()
+{
+	motor[motorA]=motor[motorB]=motor[motorC]=0;
+	inkOn(true);
+	draw(false, 0, false, 7.5);
+	draw(false, 45, true, 3.5);
+	draw(true, 90, true, 5);
+	draw(true, 45, true, 3.5);
+	draw(true, 0, false, 7.5);
+	inkOn(false);
+	draw(true, 90, true, 2.5);
+}
+
+void drawW()
+{
+	inkOn(true);
+	draw(false, 14, true, 10);
+	draw(true, 27, true, 5.5);
+	draw(false, 27, true, 5.5);
+	draw(true, 14, true, 10);
+	inkOn(false);
+//Space between letters is 0.5cm however the O finishes at the bottom left corner and must travel 10 mm + 5mm
+}
+
+// Draws a cube
+void drawCube()
+{
+	inkOn(false);
+	draw(true, 90, false, 40);
+	draw(true, 0, true, 30);
+	inkOn (true);
+	
+	draw(false, 0 , true, 10);
+	draw(false, 90 , true , 10);
+	draw(true, 0 , false, 10);
+	draw(true, 90 , false, 10);
+	
+	draw(true, 45, true, 10);
+	draw(true, 90, true, 10);
+	draw(false, 45, false, 10);
+	
+	inkOn (false);
+	draw(true, 45, true, 10);
+	inkOn (true);
+	
+	draw(false, 0, false, 10); 
+	draw(false, 45, false, 10); 
+	
+	motor[motorA] = motor[motorB] = motor[motorC] = 0;
+	inkOn(false);
+	
+}
+
+void zeroBot()
+{
+	// reset bot to 0 in x
+	motor[motorA] = -10;
+	while (SensorValue[S2] == 0)
+	{}
+	motor[motorA] = 0;
+
+	// reset bot to 0 in y
+	motor[motorB] = -10;
+	while (SensorValue[S3] == 0)
+	{}
+	motor[motorB] = 0;
+}
+
+void configureSensors()
+{
+	SensorType[S1] = sensorEV3_Ultrasonic;
+	wait1Msec(50);
+	SensorType[S2] = sensorEV3_Touch;
+	wait1Msec(50);
+	SensorType[S3] = sensorEV3_Touch;
+	wait1Msec(50);
+}
+
+void shutdownProcedure()
+{
+	motor[motorC] = 0; 
+	zeroBot();
+	displayText(6,"Shutdown")
+	wait1Msec(5000); 
+}
+
+//Use Left button for UW and use right button for Cube 
+task main ()
+{
+	configureSensors();
+	zeroBot();
+	
+	while (!getButtonPress(buttonUp))
+	{
+		if(getButtonPress(buttonRight))
+		{
+			drawCube();
+		}
+		else
+		{
+			drawU();
+			drawW();	
+		}
+	}
+	
+	shutdownProcedure()
+}
