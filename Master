@@ -3,7 +3,7 @@ motorA is the X direction (the longer rack)
 motorB is the Y direction (the shorter rack)
 motorC ink motor*/
 
-const int INKPOWER = 5;
+const int INKPOWER = 2;
 const int BASEPOWER = 10;
 
 float degreesToMM(int degrees)
@@ -53,7 +53,12 @@ void inkOn (bool inkMotor)
 	if (inkMotor == true)
 		motor[motorC]= INKPOWER;
 	else
+	{
+		motor[motorC]= -INKPOWER;
+		wait1Msec(50);
 		motor[motorC]= 0;
+	}
+		
 	wait1Msec(50);
 }
 
@@ -93,26 +98,26 @@ void drawCube()
 	draw(true, 90, false, 40);
 	draw(true, 0, true, 30);
 	inkOn (true);
-	
+
 	draw(false, 0 , true, 10);
 	draw(false, 90 , true , 10);
 	draw(true, 0 , false, 10);
 	draw(true, 90 , false, 10);
-	
-	draw(true, 45, true, 10);
+
+	draw(true, 45, true, 5);
 	draw(true, 90, true, 10);
-	draw(false, 45, false, 10);
-	
+	draw(false, 45, false, 5);
+
 	inkOn (false);
-	draw(true, 45, true, 10);
+	draw(true, 45, true, 5);
 	inkOn (true);
-	
-	draw(false, 0, false, 10); 
-	draw(false, 45, false, 10); 
-	
+
+	draw(false, 0, false, 10);
+	draw(false, 45, false, 5);
+
 	motor[motorA] = motor[motorB] = motor[motorC] = 0;
 	inkOn(false);
-	
+
 }
 
 
@@ -151,52 +156,56 @@ void shutdownProcedure()
 
 void drawSquare()
 {
+	inkOn(false);
+	draw(true, 90, false, 40);
+	draw(true, 0, true, 30);
 	inkOn (true);
-	draw(false, 90, true, 30);
-	draw(false, 0, true, 30);
-	draw(true, 90, false, 30);
-	draw(true, 0, false, 30);
-	inkOn (false);
+
+	draw(false, 0 , true, 10);
+	draw(false, 90 , true , 10);
+	draw(true, 0 , false, 10);
+	draw(true, 90 , false, 10);
+	inkOn(false);
 }
 
 //Use Left button for UW and use right button for Cube
 task main ()
 {
 	configureSensors();
-	//zeroBot();
-	drawU();
-	drawW();
+	zeroBot();
+	
+	
 	bool waitForPress = true;
 
-while (waitForPress)
-{
-if (getButtonPress(buttonLeft))
-{
-	while (getButtonPress(buttonLeft)) {}
+	while (waitForPress)
 	{
-		drawCube();
-		waitForPress = false;
+		if (getButtonPress(buttonLeft))
+		{
+			while (getButtonPress(buttonLeft)) {}
+			{
+				drawCube();
+				waitForPress = false;
+			}
+
+		}	
+		else if (getButtonPress(buttonRight))
+		{
+			while (getButtonPress(buttonRight)) {}
+			{
+				drawU();
+				drawW();
+				waitForPress = false;
+			}
+		}
+
+		else if (getButtonPress(buttonDown))
+		{
+			while (getButtonPress(buttonDown))
+			{
+				drawSquare();
+				waitForPress = false;
+			}
+		}
 	}
-
-}
-else if (getButtonPress(buttonRight))
-{
-	while (getButtonPress(buttonRight)) {}
-	{
-		drawU();
-		drawW();
-		waitForPress = false;
-	}
-
-}
-}
-
-/*
-else if (getButtonPress(ButtonDown))
-{
-	while (getButtonPress(ButtonDown));
-	//insert code for third pattern
-}
-*/
 	shutdownProcedure();
 }
