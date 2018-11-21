@@ -3,8 +3,9 @@ motorA is the X direction (the longer rack)
 motorB is the Y direction (the shorter rack)
 motorC ink motor*/
 
-const int INKPOWER = 2;
+const int INKPOWER = 1;
 const int BASEPOWER = 10;
+const int ARMTHRESHOLD = 17;
 
 float degreesToMM(int degrees)
 {
@@ -16,46 +17,56 @@ float rad(float deg)
     return deg*PI/180.0;
 }
 
-void draw(bool east, int angle, bool north, float dist)
+void draw(bool east, int angle, bool north, float dist, bool & worked)
 {
-		nMotorEncoder[motorA]=0;
-		nMotorEncoder[motorB]=0;
-		nMotorEncoder[motorC]=0;
-    int dirX, dirY;
-    float Xdist, Ydist, powerX, powerY;
-
-    if(east)
-        dirX = 1;
-    else
-        dirX = -1;
-    if(north)
-        dirY = -1;
-    else
-        dirY = 1;
-
-    Xdist = dirX * dist * cos(rad(angle));
-    Ydist = dirY * dist * sin(rad(angle));
-
-    powerX = dirX * BASEPOWER*cos(rad(angle));
-    powerY = dirY * BASEPOWER*sin(rad(angle));
-
-    motor[motorA] = powerX;
-    motor[motorB] = powerY;
-
-    while((pow((degreesToMM(nMotorEncoder[motorA])),2) + pow((degreesToMM(nMotorEncoder[motorB])),2)) < dist*dist)
-    {}
-
-	motor[motorA] = motor[motorB] = 0;
+		displayBigTextLine(4, "%f", SensorValue[S1]);
+		if(SensorValue[S1] < ARMTHRESHOLD && worked)
+		{
+			nMotorEncoder[motorA]=0;
+			nMotorEncoder[motorB]=0;
+			nMotorEncoder[motorC]=0;
+	    int dirX, dirY;
+	    float Xdist, Ydist, powerX, powerY;
+	
+	    if(east)
+	        dirX = 1;
+	    else
+	        dirX = -1;
+	    if(north)
+	        dirY = -1;
+	    else
+	        dirY = 1;
+	
+	    Xdist = dirX * dist * cos(rad(angle));
+	    Ydist = dirY * dist * sin(rad(angle));
+	
+	    powerX = dirX * BASEPOWER*cos(rad(angle));
+	    powerY = dirY * BASEPOWER*sin(rad(angle));
+	
+	    motor[motorA] = powerX;
+	    motor[motorB] = powerY;
+	
+	    while((pow((degreesToMM(nMotorEncoder[motorA])),2) + pow((degreesToMM(nMotorEncoder[motorB])),2)) < dist*dist)
+	    {}
+	
+			motor[motorA] = motor[motorB] = 0;
+			worked = true;
+		}
+		else
+			worked = false;
 }
 
 void inkOn (bool inkMotor)
 {
-	if (inkMotor == true)
+	if (inkMotor == true && SensorValue[S1] < ARMTHRESHOLD)
+	{
 		motor[motorC]= INKPOWER;
+		wait1Msec(500);
+	}
 	else
 	{
-		motor[motorC]= -INKPOWER;
-		wait1Msec(50);
+		motor[motorC]= -15*INKPOWER;
+		wait1Msec(500);
 		motor[motorC]= 0;
 	}
 		
@@ -63,30 +74,32 @@ void inkOn (bool inkMotor)
 }
 
 //This code writes UW
-
-//void draw(bool east, int angle, bool north, float dist)
-
 void drawU()
 {
 	motor[motorA]=motor[motorB]=motor[motorC]=0;
-	draw(true, 90, true, 7.5);
+	bool worked = true;
+	draw(true, 90, false, 40, worked);
+	draw(true, 0, true, 30, worked);
+	draw(true, 90, true, 7.5, worked);
 	inkOn(true);
-	draw(false, 90, false, 7.5);
-	draw(false, 45, false, 3.5);
-	draw(false, 0, true, 5);
-	draw(false, 45, true, 3.5);
-	draw(false, 90, true, 7.5);
+	
+	draw(false, 90, false, 7.5, worked);
+	draw(false, 45, false, 3.5, worked);
+	draw(false, 0, true, 5, worked);
+	draw(false, 45, true, 3.5, worked);
+	draw(false, 90, true, 7.5, worked);
 	inkOn(false);
-	draw(false, 0, true, 2.5);
+	draw(false, 0, true, 2.5, worked);
 }
 
 void drawW()
 {
+	bool worked = true;
 	inkOn(true);
-	draw(false, 76, false, 10);
-	draw(false, 63, true, 5.5);
-	draw(false, 63, false, 5.5);
-	draw(false, 76, true, 10);
+	draw(false, 76, false, 10, worked);
+	draw(false, 63, true, 5.5, worked);
+	draw(false, 63, false, 5.5, worked);
+	draw(false, 76, true, 10, worked);
 	inkOn(false);
 }
 	//Space between letters is 0.5cm however the O finishes at the bottom left corner and must travel 10 mm + 5mm
@@ -94,32 +107,31 @@ void drawW()
 // Draws a cube
 void drawCube()
 {
+	bool worked = true;
 	inkOn(false);
-	draw(true, 90, false, 40);
-	draw(true, 0, true, 30);
+	draw(true, 90, false, 40, worked);
+	draw(true, 0, true, 30, worked);
 	inkOn (true);
 
-	draw(false, 0 , true, 10);
-	draw(false, 90 , true , 10);
-	draw(true, 0 , false, 10);
-	draw(true, 90 , false, 10);
+	draw(false, 0 , true, 10, worked);
+	draw(false, 90 , true , 10, worked);
+	draw(true, 0 , false, 10, worked);
+	draw(true, 90 , false, 10, worked);
 
-	draw(true, 45, true, 5);
-	draw(true, 90, true, 10);
-	draw(false, 45, false, 5);
+	draw(true, 45, true, 5, worked);
+	draw(true, 90, true, 10, worked);
+	draw(false, 45, false, 5, worked);
 
 	inkOn (false);
-	draw(true, 45, true, 5);
+	draw(true, 45, true, 5, worked);
 	inkOn (true);
 
-	draw(false, 0, false, 10);
-	draw(false, 45, false, 5);
+	draw(false, 0, false, 10, worked);
+	draw(false, 45, false, 5, worked);
 
 	motor[motorA] = motor[motorB] = motor[motorC] = 0;
 	inkOn(false);
-
 }
-
 
 void zeroBot()
 {
@@ -148,7 +160,7 @@ void configureSensors()
 
 void shutdownProcedure()
 {
-	motor[motorC] = 0;
+	inkOn(false);
 	zeroBot();
 	displayString(6,"Shutdown");
 	wait1Msec(5000);
@@ -156,15 +168,16 @@ void shutdownProcedure()
 
 void drawSquare()
 {
+	bool worked = true;
 	inkOn(false);
-	draw(true, 90, false, 40);
-	draw(true, 0, true, 30);
+	draw(true, 90, false, 40, worked);
+	draw(true, 0, true, 30, worked);
 	inkOn (true);
 
-	draw(false, 0 , true, 10);
-	draw(false, 90 , true , 10);
-	draw(true, 0 , false, 10);
-	draw(true, 90 , false, 10);
+	draw(false, 0 , true, 10, worked);
+	draw(false, 90 , true , 10, worked);
+	draw(true, 0 , false, 10, worked);
+	draw(true, 90 , false, 10, worked);
 	inkOn(false);
 }
 
@@ -174,6 +187,10 @@ task main ()
 	configureSensors();
 	zeroBot();
 	
+	displayString(1, "PRESS LEFT FOR CUBE");
+	displayString(2, "PRESS RIGHT FOR UW");
+	displayString(3, "PRESS DOWN FOR SQUARE");
+	
 	
 	bool waitForPress = true;
 
@@ -181,6 +198,7 @@ task main ()
 	{
 		if (getButtonPress(buttonLeft))
 		{
+			eraseDisplay();
 			while (getButtonPress(buttonLeft)) {}
 			{
 				drawCube();
@@ -190,6 +208,7 @@ task main ()
 		}	
 		else if (getButtonPress(buttonRight))
 		{
+			eraseDisplay();
 			while (getButtonPress(buttonRight)) {}
 			{
 				drawU();
@@ -200,6 +219,7 @@ task main ()
 
 		else if (getButtonPress(buttonDown))
 		{
+			eraseDisplay();
 			while (getButtonPress(buttonDown))
 			{
 				drawSquare();
