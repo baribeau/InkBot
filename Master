@@ -98,14 +98,12 @@ void drawU()
 	draw(false, 0, true, 5, worked);
 	draw(false, 45, true, 3.5, worked);
 	draw(false, 90, true, 7.5, worked);
-	inkOn(false);
 	draw(false, 0, true, 2.5, worked);
 }
 
 void drawW()
 {
 	bool worked = true;
-	inkOn(true);
 	draw(false, 76, false, 10, worked);
 	draw(false, 63, true, 5.5, worked);
 	draw(false, 63, false, 5.5, worked);
