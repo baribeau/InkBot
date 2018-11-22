@@ -3,9 +3,10 @@ motorA is the X direction (the longer rack)
 motorB is the Y direction (the shorter rack)
 motorC ink motor*/
 
-const int INKPOWER = 1;
-const int BASEPOWER = 10;
+const int INKPOWER = 3;
+const int BASEPOWER = 20;
 const int ARMTHRESHOLD = 17;
+const int ARMTHRESHOLD_CLOSE = 5;
 
 float degreesToMM(int degrees)
 {
@@ -19,9 +20,9 @@ float rad(float deg)
 
 void draw(bool east, int angle, bool north, float dist, bool & worked)
 {
-		displayBigTextLine(4, "%f", SensorValue[S1]);
-		if(SensorValue[S1] < ARMTHRESHOLD && worked)
-		{
+	displayBigTextLine(4, "%f", SensorValue[S1]);
+	if(SensorValue[S1] < ARMTHRESHOLD && SensorValue[S1] > ARMTHRESHOLD_CLOSE && worked)
+	{
 			nMotorEncoder[motorA]=0;
 			nMotorEncoder[motorB]=0;
 			nMotorEncoder[motorC]=0;
@@ -51,27 +52,35 @@ void draw(bool east, int angle, bool north, float dist, bool & worked)
 	
 			motor[motorA] = motor[motorB] = 0;
 			worked = true;
-		}
-		else
+	}
+	else
 			worked = false;
 }
 
 void inkOn (bool inkMotor)
 {
-	if (inkMotor == true && SensorValue[S1] < ARMTHRESHOLD)
+	if (inkMotor == true && SensorValue[S1] < ARMTHRESHOLD && SensorValue[S1] > ARMTHRESHOLD_CLOSE)
 	{
 		motor[motorC]= INKPOWER;
 		wait1Msec(500);
 	}
 	else
 	{
-		motor[motorC]= -15*INKPOWER;
+		motor[motorC]= -5*INKPOWER;
 		wait1Msec(500);
 		motor[motorC]= 0;
 	}
 		
 	wait1Msec(50);
 }
+
+void inkEnd()
+{
+	motor[motorC] = -25;
+	wait1Msec(500);
+	motor[motorC] = 0;
+}
+	
 
 //This code writes UW
 void drawU()
@@ -82,6 +91,7 @@ void drawU()
 	draw(true, 0, true, 30, worked);
 	draw(true, 90, true, 7.5, worked);
 	inkOn(true);
+	wait1Msec(4500);
 	
 	draw(false, 90, false, 7.5, worked);
 	draw(false, 45, false, 3.5, worked);
@@ -100,7 +110,7 @@ void drawW()
 	draw(false, 63, true, 5.5, worked);
 	draw(false, 63, false, 5.5, worked);
 	draw(false, 76, true, 10, worked);
-	inkOn(false);
+	inkEnd();
 }
 	//Space between letters is 0.5cm however the O finishes at the bottom left corner and must travel 10 mm + 5mm
 
@@ -112,6 +122,7 @@ void drawCube()
 	draw(true, 90, false, 40, worked);
 	draw(true, 0, true, 30, worked);
 	inkOn (true);
+	wait1Msec(4500);
 
 	draw(false, 0 , true, 10, worked);
 	draw(false, 90 , true , 10, worked);
@@ -128,9 +139,26 @@ void drawCube()
 
 	draw(false, 0, false, 10, worked);
 	draw(false, 45, false, 5, worked);
-
+	inkEnd();
 	motor[motorA] = motor[motorB] = motor[motorC] = 0;
+}
+
+void drawArrow()
+{
+	bool worked = true;
+	draw(true, 90, false, 20, worked);
+	
+	inkOn(true);
+	wait1Msec(4500);
+	draw(true, 0, true, 40, worked);
+	draw(false, 25, false, 6, worked);
 	inkOn(false);
+	draw(true, 25, true, 6, worked);
+	inkOn(true);
+	draw(false, 25, true, 6, worked);
+	
+	motor[motorA] = motor[motorB] = motor[motorC] = 0;
+	inkEnd();
 }
 
 void zeroBot()
@@ -173,12 +201,13 @@ void drawSquare()
 	draw(true, 90, false, 40, worked);
 	draw(true, 0, true, 30, worked);
 	inkOn (true);
+	wait1Msec(4500);
 
 	draw(false, 0 , true, 10, worked);
 	draw(false, 90 , true , 10, worked);
 	draw(true, 0 , false, 10, worked);
 	draw(true, 90 , false, 10, worked);
-	inkOn(false);
+	inkEnd();
 }
 
 //Use Left button for UW and use right button for Cube
@@ -189,7 +218,8 @@ task main ()
 	
 	displayString(1, "PRESS LEFT FOR CUBE");
 	displayString(2, "PRESS RIGHT FOR UW");
-	displayString(3, "PRESS DOWN FOR SQUARE");
+	displayString(3, "PRESS UP FOR ARROW");
+	displayString(4, "PRESS DOWN FOR SQUARE");
 	
 	
 	bool waitForPress = true;
@@ -223,6 +253,16 @@ task main ()
 			while (getButtonPress(buttonDown))
 			{
 				drawSquare();
+				waitForPress = false;
+			}
+		}
+		
+		else if (getButtonPress(buttonUp))
+		{
+			eraseDisplay();
+			while (getButtonPress(buttonUp))
+			{
+				drawArrow();
 				waitForPress = false;
 			}
 		}
