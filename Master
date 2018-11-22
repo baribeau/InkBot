@@ -210,11 +210,48 @@ void drawSquare()
 	inkEnd();
 }
 
+int identification()
+{	
+	while (!getButtonPress (buttonEnter))
+	{}
+	while (getButtonPress (buttonEnter))
+	{}
+	
+	if (SensorValue[S1] == (int) colorRed)
+		return 1;
+	else if (SensorValue[S1] == (int) colorBlue)
+		return 2;
+	else if (SensorValue[S1] == (int) colorYellow)
+		return 3;	
+	else if (SensorValue[S1] == (int) colorGreen)
+		return 4;
+	else
+		return 0;
+}
+
 //Use Left button for UW and use right button for Cube
 task main ()
 {
 	configureSensors();
 	zeroBot();
+	int userInt = 0;
+	string userStr = "";
+	
+	displayString (1, "Place your colour ID card and press ENTER button");
+	userInt = identification();
+	
+	if (userInt == 1)
+		userStr = "Professor";
+	else if (userInt == 2)
+		userStr = "TA";
+	else if(userInt == 3)
+		userStr = "student";
+	else
+		userStr = "";
+		
+	displayString (2, "Welcome %s", userStr);
+	
+	eraseDisplay();
 	
 	displayString(1, "PRESS LEFT FOR CUBE");
 	displayString(2, "PRESS RIGHT FOR UW");
