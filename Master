@@ -116,7 +116,6 @@ void drawW()
 void drawCube()
 {
 	bool worked = true;
-	inkOn(false);
 	draw(true, 90, false, 40, worked);
 	draw(true, 0, true, 30, worked);
 	inkOn (true);
@@ -131,9 +130,7 @@ void drawCube()
 	draw(true, 90, true, 10, worked);
 	draw(false, 45, false, 5, worked);
 
-	inkOn (false);
 	draw(true, 45, true, 5, worked);
-	inkOn (true);
 
 	draw(false, 0, false, 10, worked);
 	draw(false, 45, false, 5, worked);
@@ -150,9 +147,7 @@ void drawArrow()
 	wait1Msec(4500);
 	draw(true, 0, true, 40, worked);
 	draw(false, 25, false, 6, worked);
-	inkOn(false);
 	draw(true, 25, true, 6, worked);
-	inkOn(true);
 	draw(false, 25, true, 6, worked);
 	
 	motor[motorA] = motor[motorB] = motor[motorC] = 0;
@@ -195,7 +190,6 @@ void shutdownProcedure()
 void drawSquare()
 {
 	bool worked = true;
-	inkOn(false);
 	draw(true, 90, false, 40, worked);
 	draw(true, 0, true, 30, worked);
 	inkOn (true);
