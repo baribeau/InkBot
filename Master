@@ -222,9 +222,7 @@ int identification()
 	else if (SensorValue[S1] == (int) colorBlue)
 		return 2;
 	else if (SensorValue[S1] == (int) colorYellow)
-		return 3;	
-	else if (SensorValue[S1] == (int) colorGreen)
-		return 4;
+		return 3;
 	else
 		return 0;
 }
