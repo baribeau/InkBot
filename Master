@@ -3,7 +3,7 @@ motorA is the X direction (the longer rack)
 motorB is the Y direction (the shorter rack)
 motorC ink motor*/
 
-const int INKPOWER = 3;
+const int INKPOWER = 2;
 const int BASEPOWER = 20;
 const int ARMTHRESHOLD = 17;
 const int ARMTHRESHOLD_CLOSE = 5;
@@ -219,6 +219,16 @@ int identification()
 		return 0;
 }
 
+void timer()
+{
+	time1[t1] = 0; 
+	
+	while (time[t1] < 25000)
+	{}
+	
+	waitForPress = false;
+}
+
 //Use Left button for UW and use right button for Cube
 task main ()
 {
@@ -253,6 +263,8 @@ task main ()
 
 	while (waitForPress)
 	{
+		timer(); 
+		
 		if (getButtonPress(buttonLeft))
 		{
 			eraseDisplay();
